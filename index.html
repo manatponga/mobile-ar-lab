@@ -43,13 +43,12 @@
       z-index: 20;
       display: flex;
       justify-content: center;
-      flex-wrap: wrap; /* เพื่อป้องกันปุ่มล้นหน้าจอในมือถือขนาดเล็ก */
       gap: 10px;
       padding: 0 12px;
     }
 
     button {
-      min-width: 100px;
+      min-width: 132px;
       min-height: 48px;
       border: 0;
       border-radius: 12px;
@@ -61,7 +60,6 @@
     }
 
     #run-button { background: #ffffff; color: #111111; }
-    #speed-button { background: #42a5f5; color: #111111; } /* สีสำหรับปุ่ม 2x */
     #status-button { background: #ffd54f; color: #111111; }
 
     .hint {
@@ -101,12 +99,10 @@
       const arLabel = document.querySelector('#ar-label');
       const topPanel = document.querySelector('#top-panel');
       const runButton = document.querySelector('#run-button');
-      const speedButton = document.querySelector('#speed-button'); // ดึงค่าปุ่ม 2x มาใช้งาน
       const statusButton = document.querySelector('#status-button');
 
       let running = true;
       let warning = false;
-      let isFast = false; // ตัวแปรสำหรับเก็บสถานะความเร็ว
 
       marker.addEventListener('markerFound', () => {
         topPanel.innerHTML = 'พบ Hiro Marker แล้ว — โมเดลมอเตอร์พร้อมใช้งาน<span class="hint">แตะปุ่มด้านล่างเพื่อทดลองควบคุม</span>';
@@ -116,22 +112,12 @@
         topPanel.innerHTML = 'เล็งกล้องไปที่ Hiro Marker<span class="hint">วาง Marker บนโต๊ะที่มีแสงเพียงพอและให้เห็นกรอบดำครบทั้งสี่ด้าน</span>';
       });
 
-      // ปุ่มควบคุมการทำงาน
       runButton.addEventListener('click', () => {
         running = !running;
         shaft.setAttribute('spin-control', 'active', running);
         runButton.textContent = running ? 'STOP!' : 'START';
       });
 
-      // ปุ่มเพิ่มความเร็ว 2x
-      speedButton.addEventListener('click', () => {
-        isFast = !isFast;
-        const newSpeed = isFast ? 440 : 220; // สลับความเร็วระหว่าง 440 (2x) และ 220 (1x)
-        shaft.setAttribute('spin-control', 'speed', newSpeed);
-        speedButton.textContent = isFast ? '1x' : '2x'; // เปลี่ยนข้อความบนปุ่ม
-      });
-
-      // ปุ่มสถานะ
       statusButton.addEventListener('click', () => {
         warning = !warning;
 
@@ -161,7 +147,6 @@
 
   <div id="controls">
     <button id="run-button" type="button">หยุดมอเตอร์</button>
-    <button id="speed-button" type="button">2x</button> <!-- เพิ่มปุ่ม 2x ตรงนี้ -->
     <button id="status-button" type="button">จำลองคำเตือน</button>
   </div>
 
