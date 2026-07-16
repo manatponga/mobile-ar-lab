@@ -43,12 +43,14 @@
       z-index: 20;
       display: flex;
       justify-content: center;
+      flex-wrap: wrap; /* เพื่อป้องกันปุ่มล้นหน้าจอในมือถือขนาดเล็ก */
       gap: 10px;
       padding: 0 12px;
     }
 
     button {
-      min-width: 132px;
+      /* ปรับลดความกว้างขั้นต่ำลงเล็กน้อยเพื่อให้ใส่ปุ่ม 4 ปุ่มได้พอดีในมือถือ */
+      min-width: 80px;
       min-height: 48px;
       border: 0;
       border-radius: 12px;
@@ -60,6 +62,8 @@
     }
 
     #run-button { background: #ffffff; color: #111111; }
+    #speed2x-button { background: #42a5f5; color: #111111; } /* สีฟ้าสำหรับ 2x */
+    #speed5x-button { background: #ab47bc; color: #ffffff; } /* สีม่วงสำหรับ 5x */
     #status-button { background: #ffd54f; color: #111111; }
 
     .hint {
@@ -99,10 +103,15 @@
       const arLabel = document.querySelector('#ar-label');
       const topPanel = document.querySelector('#top-panel');
       const runButton = document.querySelector('#run-button');
+      const speed2xButton = document.querySelector('#speed2x-button');
+      const speed5xButton = document.querySelector('#speed5x-button');
       const statusButton = document.querySelector('#status-button');
 
       let running = true;
       let warning = false;
+      
+      const BASE_SPEED = 220; // ความเร็วตั้งต้น
+      let speedMultiplier = 1; // ตัวคูณความเร็วเริ่มต้นที่ 1x
 
       marker.addEventListener('markerFound', () => {
         topPanel.innerHTML = 'พบ Hiro Marker แล้ว — โมเดลมอเตอร์พร้อมใช้งาน<span class="hint">แตะปุ่มด้านล่างเพื่อทดลองควบคุม</span>';
@@ -112,12 +121,38 @@
         topPanel.innerHTML = 'เล็งกล้องไปที่ Hiro Marker<span class="hint">วาง Marker บนโต๊ะที่มีแสงเพียงพอและให้เห็นกรอบดำครบทั้งสี่ด้าน</span>';
       });
 
+      // ฟังก์ชันสำหรับอัปเดตความเร็วและหน้าตาของปุ่ม
+      function updateSpeed() {
+        shaft.setAttribute('spin-control', 'speed', BASE_SPEED * speedMultiplier);
+        
+        // อัปเดตข้อความปุ่ม 2x
+        speed2xButton.textContent = (speedMultiplier === 2) ? '1x' : '2x';
+        // อัปเดตข้อความปุ่ม 5x
+        speed5xButton.textContent = (speedMultiplier === 5) ? '1x' : '5x';
+      }
+
+      // ปุ่มควบคุมการทำงาน
       runButton.addEventListener('click', () => {
         running = !running;
         shaft.setAttribute('spin-control', 'active', running);
         runButton.textContent = running ? 'STOP!' : 'START';
       });
 
+      // ปุ่มเพิ่มความเร็ว 2x
+      speed2xButton.addEventListener('click', () => {
+        // ถ้าเป็น 2x อยู่แล้วให้กลับเป็น 1x, ถ้าเป็นอย่างอื่นให้ตั้งเป็น 2x
+        speedMultiplier = (speedMultiplier === 2) ? 1 : 2;
+        updateSpeed();
+      });
+
+      // ปุ่มเพิ่มความเร็ว 5x
+      speed5xButton.addEventListener('click', () => {
+        // ถ้าเป็น 5x อยู่แล้วให้กลับเป็น 1x, ถ้าเป็นอย่างอื่นให้ตั้งเป็น 5x
+        speedMultiplier = (speedMultiplier === 5) ? 1 : 5;
+        updateSpeed();
+      });
+
+      // ปุ่มสถานะ
       statusButton.addEventListener('click', () => {
         warning = !warning;
 
@@ -147,6 +182,8 @@
 
   <div id="controls">
     <button id="run-button" type="button">หยุดมอเตอร์</button>
+    <button id="speed2x-button" type="button">2x</button>
+    <button id="speed5x-button" type="button">5x</button>
     <button id="status-button" type="button">จำลองคำเตือน</button>
   </div>
 
